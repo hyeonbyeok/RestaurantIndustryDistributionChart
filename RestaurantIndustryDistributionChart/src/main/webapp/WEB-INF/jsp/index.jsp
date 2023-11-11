@@ -10,8 +10,12 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 <script>
-function csvLoad(r, t){
-	
+
+$(document).ready(function(){
+	csvLoad('대전','전체');
+});
+
+function csvLoad(r, t){	
 	//graph Map
 	let dataMap = [];
 	let categoryMap = [];
@@ -32,7 +36,7 @@ function csvLoad(r, t){
                 //csv파일 요식업종 filter작업
                 const filteredData = fn_dataFilter(csvData, t);
                 
-             	// 그룹화 및 카운팅
+             	//요식업 그룹화 및 카운팅
                 const groupedData = fn_groupData(filteredData, t);
 				
                 //요식업 분류별 data
@@ -40,7 +44,6 @@ function csvLoad(r, t){
                     const count = groupedData[key].count;
                     const data = groupedData[key].data;
 					
-                    console.log(`Key: `,key,` Count: `, count);
                     dataMap.push(count);
                     categoryMap.push(key);
                 });
@@ -147,7 +150,7 @@ function fn_search(){
 				<option class="list-group-item" value="경기">경기</option>
 				<option class="list-group-item" value="충북">충북</option>
 				<option class="list-group-item" value="충남">충남</option>
-				<option class="list-group-item" value="대전">대전</option>
+				<option class="list-group-item" selected value="대전">대전</option>
 				<option class="list-group-item" value="세종">세종</option>
 				<option class="list-group-item" value="전북">전북</option>
 				<option class="list-group-item" value="전남">전남</option>
@@ -173,6 +176,9 @@ function fn_search(){
 				<option class="list-group-item" value="한식">한식</option>
 			</select>
 			<button style="margin:10px;" type="button" class="btn btn-primary" onclick="fn_search();">검색</button>
+		</div>
+		<div>
+			<div id="regieonGraph"></div>
 		</div>
 		<div>
 			<div id="container"></div>

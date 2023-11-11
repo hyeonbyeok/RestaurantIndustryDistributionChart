@@ -3,8 +3,8 @@ let chart = Highcharts.chart('container', {
         type: 'column'
     },
     title: {
-        align: 'left',
-        text: ''
+        align: 'center',
+        text: '요식업종 별 그래프'
     },
     subtitle: {
         align: 'left',
