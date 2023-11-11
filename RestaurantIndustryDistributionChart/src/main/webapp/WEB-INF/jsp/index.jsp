@@ -10,39 +10,9 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 <script>
-$(document).ready(function() {
-
-	fetch("/data/소상공인시장진흥공단_상가(상권)정보_강원_202309.csv")
-    .then(response => response.text())
-    .then(data => {
-    	Papa.parse(data, {
-            header: true,
-            dynamicTyping: true,
-            complete: function(results) {
-                // 결과에서 데이터 가져오기
-                const csvData = results.data;
-
-                // 데이터 처리
-                console.log(csvData);
-                
-                //'상권업종대분류명' 열이 '음식'인 데이터 가져오기
-                const foodData = csvData.filter(row => row['상권업종대분류명'] === '음식');
-                console.log(foodData);
-                
-               /*  // 예제: 각 행의 제목으로 데이터 가져오기
-                csvData.forEach(row => {
-                    console.log(row['제목']); // '제목'은 실제 CSV 파일의 열 이름으로 변경해야 합니다.
-                }); */
-            }
-        });
-    })
-    .catch(error => {
-        console.error('파일을 불러오는 중 오류 발생:', error);
-    });
-});
-
 function csvLoad(r, t){
-	console.log(r);
+
+	//지역에 다른 csv파일 read
 	let csvUrl = "/data/소상공인시장진흥공단_상가(상권)정보_"+r+"_202309.csv";
 	fetch(csvUrl)
     .then(response => response.text())
@@ -51,17 +21,24 @@ function csvLoad(r, t){
             header: true,
             dynamicTyping: true,
             complete: function(results) {
-                // 결과에서 데이터 가져오기
-                const csvData = results.data;
-                console.log(csvData)
-                //'상권업종대분류명' 열이 '음식'인 데이터 가져오기
-                const foodData = fn_dataFilter(csvData, t);
-                console.log(foodData);
                 
-               /*  // 예제: 각 행의 제목으로 데이터 가져오기
-                csvData.forEach(row => {
-                    console.log(row['제목']); // '제목'은 실제 CSV 파일의 열 이름으로 변경해야 합니다.
-                }); */
+            	// 결과에서 데이터 가져오기
+                const csvData = results.data;
+                
+                //csv파일 요식업종 filter작업
+                const filteredData = fn_dataFilter(csvData, t);
+                console.log(filteredData);
+                
+             	// 그룹화 및 카운팅
+                const groupedData = fn_groupData(filteredData, t);
+
+                //data담기 위한 작업
+                Object.keys(groupedData).forEach(key => {
+                    const count = groupedData[key].count;
+                    const data = groupedData[key].data;
+
+                    console.log(`Key: `,key,` Count: `, count);
+                });
             }
         });
     })
@@ -72,11 +49,45 @@ function csvLoad(r, t){
 
 
 function fn_dataFilter(csvData, t){
+	//'상권업종대분류명' 열이 '음식'인 데이터 가져오기
 	if(t == "전체"){
     	return csvData.filter(row => row['상권업종대분류명'] === '음식');
     }else{
     	return csvData.filter(row => row['상권업종대분류명'] === '음식' && row["상권업종중분류명"] === t )
     }
+}
+
+function fn_groupData(data, t){
+	let rowName;
+	
+	if(t == "전체"){
+		rowName = '상권업종중분류명';
+    }else{
+    	rowName = '상권업종소분류명';
+    }
+	
+	// 그룹화 및 카운팅
+    const groupedData = data.reduce((result, row) => {
+        const key = row[rowName]; // '세부업종명'은 실제 CSV 파일의 열 이름으로 변경해야 합니다.
+        
+        // 그룹이 존재하는지 확인
+        if (!result[key]) {
+            result[key] = {
+                count: 1,
+                data: [row]
+            };
+        } else {
+            result[key].count++;
+            result[key].data.push(row);
+        }
+
+        return result;
+    }, {});
+    
+    return groupedData;
+}
+
+function fn_regionGroupData(){
 	
 }
 
