@@ -46,6 +46,7 @@ function csvLoad(r, t){
                 });
                 
                 var total = filteredData.length;
+                
                 var newPlotOptions = {
                 		series: {
 	                        borderWidth: 0,
@@ -161,6 +162,14 @@ function fn_search(){
 			</select>
 			<select style="margin:10px;" class="list-group" id="restaurantType" name="restaurantType">
 				<option class="list-group-item" value="전체">전체</option>
+				<option class="list-group-item" value="기타 간이">기타 간이</option>
+				<option class="list-group-item" value="주점">주점</option>
+				<option class="list-group-item" value="비알코올 ">비알코올 </option>
+				<option class="list-group-item" value="중식">중식</option>
+				<option class="list-group-item" value="서양식">서양식</option>
+				<option class="list-group-item" value="일식">일식</option>
+				<option class="list-group-item" value="동남아시아">동남아시아</option>
+				<option class="list-group-item" value="구내식당·뷔페">구내식당·뷔페</option>
 				<option class="list-group-item" value="한식">한식</option>
 			</select>
 			<button style="margin:10px;" type="button" class="btn btn-primary" onclick="fn_search();">검색</button>
