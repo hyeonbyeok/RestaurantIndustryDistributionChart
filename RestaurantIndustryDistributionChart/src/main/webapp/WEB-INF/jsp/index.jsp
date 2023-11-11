@@ -62,7 +62,8 @@ function csvLoad(r, t){
                 chart.update({
                	  	plotOptions: newPlotOptions
                	});
-				chart.series[0].name = r;
+                
+				chart.series[0].name =  t == "전체" ? r : r + " / " + t;
                 chart.series[0].setData(dataMap);
                 chart.xAxis[0].update({
                	  	categories: categoryMap
