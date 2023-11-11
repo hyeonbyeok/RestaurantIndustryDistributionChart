@@ -55,7 +55,7 @@ function csvLoad(r, t){
                 const csvData = results.data;
                 console.log(csvData)
                 //'상권업종대분류명' 열이 '음식'인 데이터 가져오기
-                const foodData = csvData.filter(row => row['상권업종대분류명'] === '음식');
+                const foodData = fn_dataFilter(csvData, t);
                 console.log(foodData);
                 
                /*  // 예제: 각 행의 제목으로 데이터 가져오기
@@ -70,7 +70,8 @@ function csvLoad(r, t){
     });
 }
 
-function fn_dataFilter(t){
+
+function fn_dataFilter(csvData, t){
 	if(t == "전체"){
     	return csvData.filter(row => row['상권업종대분류명'] === '음식');
     }else{
@@ -116,7 +117,8 @@ function fn_search(){
 				<option class="list-group-item" value="제주">제주</option>
 			</select>
 			<select style="margin:10px;" class="list-group" id="restaurantType" name="restaurantType">
-				<option selected disabled value="">전체</option>
+				<option class="list-group-item" value="전체">전체</option>
+				<option class="list-group-item" value="한식">한식</option>
 			</select>
 			<button style="margin:10px;" type="button" class="btn btn-primary" onclick="fn_search();">검색</button>
 		</div>
