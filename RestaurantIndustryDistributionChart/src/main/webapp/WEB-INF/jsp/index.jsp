@@ -11,7 +11,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 <script>
 function csvLoad(r, t){
-
+	
+	//graph Map
+	let dataMap = [];
+	let categoryMap = [];
+	
 	//지역에 다른 csv파일 read
 	let csvUrl = "/data/소상공인시장진흥공단_상가(상권)정보_"+r+"_202309.csv";
 	fetch(csvUrl)
@@ -27,24 +31,51 @@ function csvLoad(r, t){
                 
                 //csv파일 요식업종 filter작업
                 const filteredData = fn_dataFilter(csvData, t);
-                console.log(filteredData);
                 
              	// 그룹화 및 카운팅
                 const groupedData = fn_groupData(filteredData, t);
-
-                //data담기 위한 작업
+				
+                //요식업 분류별 data
                 Object.keys(groupedData).forEach(key => {
                     const count = groupedData[key].count;
                     const data = groupedData[key].data;
-
+					
                     console.log(`Key: `,key,` Count: `, count);
+                    dataMap.push(count);
+                    categoryMap.push(key);
                 });
+                
+                var total = filteredData.length;
+                var newPlotOptions = {
+                		series: {
+	                        borderWidth: 0,
+	                        dataLabels: {
+	                            enabled: true,
+	                            formatter: function() {
+	                                var percentage = (this.y / total) * 100;
+	                                return Highcharts.numberFormat(percentage, 1) + '%';
+                              	}	
+	                        }
+	                    }	
+           		};
+
+                chart.update({
+               	  	plotOptions: newPlotOptions
+               	});
+				chart.series[0].name = r;
+                chart.series[0].setData(dataMap);
+                chart.xAxis[0].update({
+               	  	categories: categoryMap
+               	});
+                
             }
         });
     })
     .catch(error => {
         console.error('파일을 불러오는 중 오류 발생:', error);
     });
+	
+	
 }
 
 
@@ -133,9 +164,11 @@ function fn_search(){
 			</select>
 			<button style="margin:10px;" type="button" class="btn btn-primary" onclick="fn_search();">검색</button>
 		</div>
-		
+		<div>
+			<div id="container"></div>
+		</div>
 	</div>
 </div>
-
+<script type="text/javascript" src="/js/graph.js"></script>
 </body>
 </html>
