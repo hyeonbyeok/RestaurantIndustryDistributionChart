@@ -197,6 +197,8 @@ function fn_search(){
 	
 	csvLoad(r,t);
 	
+	setCenter(36.3504119, 127.3845475);
+	
 }
 
 </script>
@@ -247,7 +249,7 @@ function fn_search(){
 		</div>
 	</div>
 	<div style="width: 50%;">
-		<div id="map" style="width:1920px;height:849px;">
+		<div id="map" style="width:100%;height:960px;">
 		<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a163b9c1554276acb41e377bdbfa6b84&libraries=services"></script>
 		<script>
 			// 마커를 담을 배열입니다
@@ -256,11 +258,26 @@ function fn_search(){
 			var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
 			    mapOption = { 
 			        center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-			        level: 3 // 지도의 확대 레벨
+			        level: 7 // 지도의 확대 레벨
 			    };
 			
 			
 			var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+			
+			function setCenter(lat, lng) {
+			    // 이동할 위도 경도 위치를 생성합니다 
+			    var moveLatLon = new kakao.maps.LatLng(lat, lng);
+			    
+			    // 지도 중심을 부드럽게 이동시킵니다
+			    // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
+			    map.setCenter(moveLatLon);            
+			}        
+			
+			// 버튼 클릭에 따라 지도 이동 기능을 막거나 풀고 싶은 경우에는 map.setDraggable 함수를 사용합니다
+			function setDraggable(draggable) {
+			    // 마우스 드래그로 지도 이동 가능여부를 설정합니다
+			    map.setDraggable(draggable);    
+			}
 		</script>
 	</div>
 </div>
