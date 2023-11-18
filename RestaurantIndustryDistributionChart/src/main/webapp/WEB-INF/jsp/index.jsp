@@ -202,7 +202,7 @@ function fn_search(){
 </script>
 </head>
 <body>
-<div>
+<div style="display:flex;">
 	<div>
 		<div style="display:flex;">
 			<select style="margin:10px;" class="list-group" id="region" name="region" >
