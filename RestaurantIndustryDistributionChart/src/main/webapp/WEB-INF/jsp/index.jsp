@@ -20,6 +20,8 @@ function csvLoad(r, t){
 	let dataMap = [];
 	let categoryMap = [];
 	
+	let regionDataMap = [];
+	let regionMap = [];
 	//지역에 다른 csv파일 read
 	let csvUrl = "/data/소상공인시장진흥공단_상가(상권)정보_"+r+"_202309.csv";
 	fetch(csvUrl)
@@ -73,6 +75,40 @@ function csvLoad(r, t){
                	  	categories: categoryMap
                	});
                 
+                
+                //지역별 그룹화 및 카운트
+                const regionGroupData = fn_regionGroupData(filteredData, r);
+                Object.keys(regionGroupData).forEach(key => {
+                    const count = regionGroupData[key].count;
+                    const data = regionGroupData[key].data;
+					
+                    regionDataMap.push(count);
+                    regionMap.push(key);
+                });
+
+                var regionPlotOptions = {
+                		series: {
+	                        borderWidth: 0,
+	                        dataLabels: {
+	                            enabled: true,
+	                            formatter: function() {
+	                                var percentage = (this.y / total) * 100;
+	                                return Highcharts.numberFormat(percentage, 1) + '%';
+                              	}	
+	                        }
+	                    }	
+           		};
+
+                regionChart.update({
+               	  	plotOptions: newPlotOptions
+               	});
+                
+                regionChart.series[0].name =  r;
+                regionChart.series[0].setData(regionDataMap);
+                regionChart.xAxis[0].update({
+               	  	categories: regionMap
+               	});
+                
             }
         });
     })
@@ -123,8 +159,34 @@ function fn_groupData(data, t){
     return groupedData;
 }
 
-function fn_regionGroupData(){
+function fn_regionGroupData(data, r){
+	let rowName;
 	
+	if(r == "전국"){
+		rowName = "시도명"
+	}else{
+		rowName = "시군구명"
+	}
+	
+	// 그룹화 및 카운팅
+    const groupedData = data.reduce((result, row) => {
+        const key = row[rowName]; // '세부업종명'은 실제 CSV 파일의 열 이름으로 변경해야 합니다.
+        
+        // 그룹이 존재하는지 확인
+        if (!result[key]) {
+            result[key] = {
+                count: 1,
+                data: [row]
+            };
+        } else {
+            result[key].count++;
+            result[key].data.push(row);
+        }
+
+        return result;
+    }, {});
+    
+    return groupedData;
 }
 
 function fn_search(){
