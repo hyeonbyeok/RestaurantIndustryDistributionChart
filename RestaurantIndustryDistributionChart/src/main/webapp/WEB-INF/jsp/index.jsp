@@ -203,7 +203,7 @@ function fn_search(){
 </head>
 <body>
 <div style="display:flex;">
-	<div>
+	<div style="width: 50%;">
 		<div style="display:flex;">
 			<select style="margin:10px;" class="list-group" id="region" name="region" >
 				<option class="list-group-item" value="전국">전국</option>
@@ -245,6 +245,23 @@ function fn_search(){
 		<div>
 			<div id="container"></div>
 		</div>
+	</div>
+	<div style="width: 50%;">
+		<div id="map" style="width:1920px;height:849px;">
+		<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a163b9c1554276acb41e377bdbfa6b84&libraries=services"></script>
+		<script>
+			// 마커를 담을 배열입니다
+			var markers = [];
+			
+			var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+			    mapOption = { 
+			        center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+			        level: 3 // 지도의 확대 레벨
+			    };
+			
+			
+			var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+		</script>
 	</div>
 </div>
 <script type="text/javascript" src="/js/graph.js"></script>
