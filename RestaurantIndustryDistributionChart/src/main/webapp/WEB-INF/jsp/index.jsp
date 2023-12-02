@@ -9,6 +9,16 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+<style>
+	.btn-circle.btn-xl {
+		width: 70px;
+		height: 70px;
+		padding: 16px 16px;
+		border-radius: 35px;
+		font-size: 12px;
+		text-align: center;
+	}
+</style>
 <script>
 
 $(document).ready(function(){
@@ -41,12 +51,12 @@ function csvLoad(r, t){
              	//요식업 그룹화 및 카운팅
                 const groupedData = fn_groupData(filteredData, t == "전체" ? "상권업종중분류명" : "상권업종소분류명" );
 				
-                makeGraph(groupedData, filteredData, chart , t, r) 
+                viewData(groupedData, filteredData, chart , t, r , "type") 
                 
                 //지역별 그룹화 및 카운트
                 const regionGroupData = fn_groupData(filteredData, r == "전국" ? "시도명" : "시군구명");
                 
-                makeGraph(regionGroupData, filteredData, regionChart , t, r);
+                viewData(regionGroupData, filteredData, regionChart , t, r , "region");
 
             	//해당 지역 이동
             	setCenter(latLng[r]["lat"], latLng[r]["lng"], latLng[r]["level"]);
@@ -60,10 +70,10 @@ function csvLoad(r, t){
 	
 }
 
-function makeGraph(groupedData, filteredData, chartVar, t, r ){
+function viewData(groupedData, filteredData, chartVar, t, r , type){
 	let dataMap = [];
 	let categoryMap = [];
-	
+	let location = {};
 	
 	//요식업 분류별 data
     Object.keys(groupedData).forEach(key => {
@@ -72,7 +82,21 @@ function makeGraph(groupedData, filteredData, chartVar, t, r ){
 		
         dataMap.push(count);
         categoryMap.push(key);
+        
+        if(type == "region"){
+	        location[key] = {
+	            "lat": groupedData[key].lat / groupedData[key].count,
+	            "lng": groupedData[key].lng / groupedData[key].count,
+	            "count" : count
+	        };
+        }
+        
     });
+    
+	if(type == "region"){
+		fn_makeMapOverlay(location)
+	}
+	
     
     var total = filteredData.length;
     
@@ -98,8 +122,16 @@ function makeGraph(groupedData, filteredData, chartVar, t, r ){
     chartVar.xAxis[0].update({
    	  	categories: categoryMap
    	});
+
 }
 
+function fn_makeMapOverlay(json){
+	console.log(json);
+	for(var key in json){
+		customOverlay(key, json[key].count, json[key].lat, json[key].lng)
+	}
+	
+}
 
 function fn_dataFilter(csvData, t){
 	//'상권업종대분류명' 열이 '음식'인 데이터 가져오기
@@ -115,21 +147,23 @@ function fn_groupData(data, rowName){
 	// 그룹화 및 카운팅
     const groupedData = data.reduce((result, row) => {
         const key = row[rowName];
-        
         // 그룹이 존재하는지 확인
         if (!result[key]) {
             result[key] = {
                 count: 1,
-                data: [row]
+                data: [row],
+                lat :  row["위도"],
+                lng : row["경도"],
             };
         } else {
             result[key].count++;
             result[key].data.push(row);
+            result[key].lat += row["위도"];
+            result[key].lng += row["경도"];
         }
 
         return result;
     }, {});
-    
     return groupedData;
 }
 
@@ -228,6 +262,25 @@ function fn_search(){
 			    
 				//지도 확대 축소 비활성화
 			    map.setZoomable(false); 
+				
+			function customOverlay(region, count, lat, lng){
+
+			    var content = `<label class="btn btn-primary btn-circle btn-xl " style="pointer-events : none;">`+region+`</br>`+count+`</label>`;
+	
+			 	// 커스텀 오버레이가 표시될 위치입니다 
+			 	var position = new kakao.maps.LatLng(lat, lng);  
+		
+			 	// 커스텀 오버레이를 생성합니다
+			 	var customOverlay = new kakao.maps.CustomOverlay({
+		    	 	position: position,
+			     	content: content   
+			 	});
+			 	
+			 	// 커스텀 오버레이를 지도에 표시합니다
+		 		customOverlay.setMap(map);
+			 	
+			 	
+			}
 		</script>
 	</div>
 </div>
