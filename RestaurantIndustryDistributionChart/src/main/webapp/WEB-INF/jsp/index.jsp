@@ -39,75 +39,15 @@ function csvLoad(r, t){
                 const filteredData = fn_dataFilter(csvData, t);
                 
              	//요식업 그룹화 및 카운팅
-                const groupedData = fn_groupData(filteredData, t);
+                const groupedData = fn_groupData(filteredData, t == "전체" ? "상권업종중분류명" : "상권업종소분류명" );
 				
-                //요식업 분류별 data
-                Object.keys(groupedData).forEach(key => {
-                    const count = groupedData[key].count;
-                    const data = groupedData[key].data;
-					
-                    dataMap.push(count);
-                    categoryMap.push(key);
-                });
-                
-                var total = filteredData.length;
-                
-                var newPlotOptions = {
-                		series: {
-	                        borderWidth: 0,
-	                        dataLabels: {
-	                            enabled: true,
-	                            formatter: function() {
-	                                var percentage = (this.y / total) * 100;
-	                                return Highcharts.numberFormat(percentage, 1) + '%';
-                              	}	
-	                        }
-	                    }	
-           		};
-
-                chart.update({
-               	  	plotOptions: newPlotOptions
-               	});
-                
-				chart.series[0].name =  t == "전체" ? r : r + " / " + t;
-                chart.series[0].setData(dataMap);
-                chart.xAxis[0].update({
-               	  	categories: categoryMap
-               	});
-                
+                makeGraph(groupedData, filteredData, chart , t, r) 
                 
                 //지역별 그룹화 및 카운트
-                const regionGroupData = fn_regionGroupData(filteredData, r);
-                Object.keys(regionGroupData).forEach(key => {
-                    const count = regionGroupData[key].count;
-                    const data = regionGroupData[key].data;
-					
-                    regionDataMap.push(count);
-                    regionMap.push(key);
-                });
-
-                var regionPlotOptions = {
-                		series: {
-	                        borderWidth: 0,
-	                        dataLabels: {
-	                            enabled: true,
-	                            formatter: function() {
-	                                var percentage = (this.y / total) * 100;
-	                                return Highcharts.numberFormat(percentage, 1) + '%';
-                              	}	
-	                        }
-	                    }	
-           		};
-
-                regionChart.update({
-               	  	plotOptions: newPlotOptions
-               	});
+                const regionGroupData = fn_groupData(filteredData, r == "전국" ? "시도명" : "시군구명");
                 
-                regionChart.series[0].name =  r;
-                regionChart.series[0].setData(regionDataMap);
-                regionChart.xAxis[0].update({
-               	  	categories: regionMap
-               	});
+                makeGraph(regionGroupData, filteredData, regionChart , t, r);
+
                 
             }
         });
@@ -117,6 +57,46 @@ function csvLoad(r, t){
     });
 	
 	
+}
+
+function makeGraph(groupedData, filteredData, chartVar, t, r ){
+	let dataMap = [];
+	let categoryMap = [];
+	
+	
+	//요식업 분류별 data
+    Object.keys(groupedData).forEach(key => {
+        const count = groupedData[key].count;
+        const data = groupedData[key].data;
+		
+        dataMap.push(count);
+        categoryMap.push(key);
+    });
+    
+    var total = filteredData.length;
+    
+    var newPlotOptions = {
+    		series: {
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                    formatter: function() {
+                        var percentage = (this.y / total) * 100;
+                        return Highcharts.numberFormat(percentage, 1) + '%';
+                  	}	
+                }
+            }	
+		};
+
+    chartVar.update({
+   	  	plotOptions: newPlotOptions
+   	});
+    
+    chartVar.series[0].name =  t == "전체" ? r : r + " / " + t;
+    chartVar.series[0].setData(dataMap);
+    chartVar.xAxis[0].update({
+   	  	categories: categoryMap
+   	});
 }
 
 
@@ -129,18 +109,11 @@ function fn_dataFilter(csvData, t){
     }
 }
 
-function fn_groupData(data, t){
-	let rowName;
-	
-	if(t == "전체"){
-		rowName = '상권업종중분류명';
-    }else{
-    	rowName = '상권업종소분류명';
-    }
+function fn_groupData(data, rowName){
 	
 	// 그룹화 및 카운팅
     const groupedData = data.reduce((result, row) => {
-        const key = row[rowName]; // '세부업종명'은 실제 CSV 파일의 열 이름으로 변경해야 합니다.
+        const key = row[rowName];
         
         // 그룹이 존재하는지 확인
         if (!result[key]) {
@@ -159,35 +132,10 @@ function fn_groupData(data, t){
     return groupedData;
 }
 
-function fn_regionGroupData(data, r){
-	let rowName;
-	
-	if(r == "전국"){
-		rowName = "시도명"
-	}else{
-		rowName = "시군구명"
-	}
-	
-	// 그룹화 및 카운팅
-    const groupedData = data.reduce((result, row) => {
-        const key = row[rowName]; // '세부업종명'은 실제 CSV 파일의 열 이름으로 변경해야 합니다.
-        
-        // 그룹이 존재하는지 확인
-        if (!result[key]) {
-            result[key] = {
-                count: 1,
-                data: [row]
-            };
-        } else {
-            result[key].count++;
-            result[key].data.push(row);
-        }
-
-        return result;
-    }, {});
-    
-    return groupedData;
-}
+//위도 경도 JSON
+let latLng = {
+		"대전": {"lat" : 36.3504119 , "lng" : 127.3845475}
+};
 
 function fn_search(){
 	
@@ -197,8 +145,8 @@ function fn_search(){
 	
 	csvLoad(r,t);
 	
-	setCenter(36.3504119, 127.3845475);
-	
+	//해당 지역 이동
+	setCenter(latLng[r]["lat"], latLng[r]["lng"]);
 }
 
 </script>
@@ -257,8 +205,8 @@ function fn_search(){
 			
 			var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
 			    mapOption = { 
-			        center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-			        level: 7 // 지도의 확대 레벨
+			        center: new kakao.maps.LatLng(latLng["대전"]["lat"], latLng["대전"]["lng"]), // 지도의 중심좌표
+			        level: 8 // 지도의 확대 레벨
 			    };
 			
 			
@@ -273,11 +221,11 @@ function fn_search(){
 			    map.setCenter(moveLatLon);            
 			}        
 			
-			// 버튼 클릭에 따라 지도 이동 기능을 막거나 풀고 싶은 경우에는 map.setDraggable 함수를 사용합니다
-			function setDraggable(draggable) {
-			    // 마우스 드래그로 지도 이동 가능여부를 설정합니다
-			    map.setDraggable(draggable);    
-			}
+				//지동 이동 비활성화
+			    map.setDraggable(false);
+			    
+				//지도 확대 축소 비활성화
+			    map.setZoomable(false); 
 		</script>
 	</div>
 </div>
