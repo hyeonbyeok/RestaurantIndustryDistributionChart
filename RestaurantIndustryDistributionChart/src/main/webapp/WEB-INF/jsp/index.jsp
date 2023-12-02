@@ -48,7 +48,8 @@ function csvLoad(r, t){
                 
                 makeGraph(regionGroupData, filteredData, regionChart , t, r);
 
-                
+            	//해당 지역 이동
+            	setCenter(latLng[r]["lat"], latLng[r]["lng"], latLng[r]["level"]);
             }
         });
     })
@@ -134,7 +135,8 @@ function fn_groupData(data, rowName){
 
 //위도 경도 JSON
 let latLng = {
-		"대전": {"lat" : 36.3504119 , "lng" : 127.3845475}
+		"대전" : {"lat" : 36.3504119 , "lng" : 127.3845475, "level" : 8},
+		"강원" : {"lat" : 37.3228 ,  "lng" : 128.555, "level" : 11}
 };
 
 function fn_search(){
@@ -145,8 +147,6 @@ function fn_search(){
 	
 	csvLoad(r,t);
 	
-	//해당 지역 이동
-	setCenter(latLng[r]["lat"], latLng[r]["lng"]);
 }
 
 </script>
@@ -202,23 +202,25 @@ function fn_search(){
 		<script>
 			// 마커를 담을 배열입니다
 			var markers = [];
-			
+			let regionSet = latLng["대전"];
 			var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
 			    mapOption = { 
-			        center: new kakao.maps.LatLng(latLng["대전"]["lat"], latLng["대전"]["lng"]), // 지도의 중심좌표
-			        level: 8 // 지도의 확대 레벨
+			        center: new kakao.maps.LatLng(regionSet["lat"], regionSet["lng"]), // 지도의 중심좌표
+			        level: regionSet["level"] // 지도의 확대 레벨
 			    };
 			
 			
 			var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
 			
-			function setCenter(lat, lng) {
+			function setCenter(lat, lng, level) {
 			    // 이동할 위도 경도 위치를 생성합니다 
 			    var moveLatLon = new kakao.maps.LatLng(lat, lng);
 			    
 			    // 지도 중심을 부드럽게 이동시킵니다
 			    // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
-			    map.setCenter(moveLatLon);            
+			    map.setCenter(moveLatLon);
+			    map.setLevel(level)
+			    
 			}        
 			
 				//지동 이동 비활성화
