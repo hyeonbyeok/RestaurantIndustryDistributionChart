@@ -50,12 +50,14 @@ function csvLoad(r, t){
                 
              	//요식업 그룹화 및 카운팅
                 const groupedData = fn_groupData(filteredData, t == "전체" ? "상권업종중분류명" : "상권업종소분류명" );
-				
-                viewData(groupedData, filteredData, chart , t, r , "type") 
                 
                 //지역별 그룹화 및 카운트
                 const regionGroupData = fn_groupData(filteredData, r == "전국" ? "시도명" : "시군구명");
                 
+             	//그래프 표현
+                viewData(groupedData, filteredData, chart , t, r) 
+             	
+             	//그래프 표현 및 map에 data표출
                 viewData(regionGroupData, filteredData, regionChart , t, r , "region");
 
             	//해당 지역 이동
@@ -126,7 +128,7 @@ function viewData(groupedData, filteredData, chartVar, t, r , type){
 }
 
 function fn_makeMapOverlay(json){
-	console.log(json);
+	clearCustomOverlay();
 	for(var key in json){
 		customOverlay(key, json[key].count, json[key].lat, json[key].lng)
 	}
@@ -143,10 +145,15 @@ function fn_dataFilter(csvData, t){
 }
 
 function fn_groupData(data, rowName){
-	
+
 	// 그룹화 및 카운팅
     const groupedData = data.reduce((result, row) => {
-        const key = row[rowName];
+        let key = row[rowName];
+        
+        if (row["시도명"] == "경기도" && rowName == "시군구명"){
+        	key = row[rowName].split(' ')[0];
+        }
+
         // 그룹이 존재하는지 확인
         if (!result[key]) {
             result[key] = {
@@ -170,9 +177,12 @@ function fn_groupData(data, rowName){
 //위도 경도 JSON
 let latLng = {
 		"대전" : {"lat" : 36.3504119 , "lng" : 127.3845475, "level" : 8},
-		"강원" : {"lat" : 37.5228 ,  "lng" : 128.355, "level" : 11}
+		"강원" : {"lat" : 37.5228 ,  "lng" : 128.355, "level" : 11},
+		"경기" : {"lat" : 37.567167 , "lng" : 127.190292, "level" : 10}
 };
 
+
+//검색
 function fn_search(){
 	
 	let r = document.getElementById("region").value;
@@ -257,30 +267,42 @@ function fn_search(){
 			    
 			}        
 			
-				//지동 이동 비활성화
-			    map.setDraggable(false);
-			    
-				//지도 확대 축소 비활성화
-			    map.setZoomable(false); 
-				
+			//지동 이동 비활성화
+		    map.setDraggable(true);
+		    
+			//지도 확대 축소 비활성화
+		    map.setZoomable(true); 
+			
+		    let customOverlays = [];
+			
 			function customOverlay(region, count, lat, lng){
-
-			    var content = `<label class="btn btn-primary btn-circle btn-xl " style="pointer-events : none;">`+region+`</br>`+count+`</label>`;
+				
+			    var content = `<label class="btn btn-primary btn-circle btn-xl " style="pointer-events : none;">`+region.replace(" ", "</br>")+`</br>`+count+`</label>`;
 	
 			 	// 커스텀 오버레이가 표시될 위치입니다 
 			 	var position = new kakao.maps.LatLng(lat, lng);  
 		
 			 	// 커스텀 오버레이를 생성합니다
+			 	
 			 	var customOverlay = new kakao.maps.CustomOverlay({
 		    	 	position: position,
 			     	content: content   
 			 	});
+			 	customOverlays.push(customOverlay)
 			 	
 			 	// 커스텀 오버레이를 지도에 표시합니다
 		 		customOverlay.setMap(map);
-			 	
-			 	
+			 		 	
 			}
+			
+			function clearCustomOverlay(){
+			    for (var i = 0; i < customOverlays.length; i++) {
+			        customOverlays[i].setMap(null);
+			    }
+			    
+			    customOverlays = [];
+			}
+			
 		</script>
 	</div>
 </div>
