@@ -170,7 +170,7 @@ function fn_groupData(data, rowName){
 //위도 경도 JSON
 let latLng = {
 		"대전" : {"lat" : 36.3504119 , "lng" : 127.3845475, "level" : 8},
-		"강원" : {"lat" : 37.3228 ,  "lng" : 128.555, "level" : 11}
+		"강원" : {"lat" : 37.5228 ,  "lng" : 128.355, "level" : 11}
 };
 
 function fn_search(){
