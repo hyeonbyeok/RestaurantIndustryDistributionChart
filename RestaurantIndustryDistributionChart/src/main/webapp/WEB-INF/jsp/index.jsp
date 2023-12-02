@@ -148,11 +148,7 @@ function fn_groupData(data, rowName){
 
 	// 그룹화 및 카운팅
     const groupedData = data.reduce((result, row) => {
-        let key = row[rowName];
-        
-        if (row["시도명"] == "경기도" && rowName == "시군구명"){
-        	key = row[rowName].split(' ')[0];
-        }
+        let key = row[rowName].split(' ')[0];
 
         // 그룹이 존재하는지 확인
         if (!result[key]) {
@@ -267,10 +263,10 @@ function fn_search(){
 			    
 			}        
 			
-			//지동 이동 비활성화
+			//지동 이동 비활성화 false
 		    map.setDraggable(true);
 		    
-			//지도 확대 축소 비활성화
+			//지도 확대 축소 비활성화 false
 		    map.setZoomable(true); 
 			
 		    let customOverlays = [];
@@ -295,6 +291,7 @@ function fn_search(){
 			 		 	
 			}
 			
+			//customeOverlay clear
 			function clearCustomOverlay(){
 			    for (var i = 0; i < customOverlays.length; i++) {
 			        customOverlays[i].setMap(null);
