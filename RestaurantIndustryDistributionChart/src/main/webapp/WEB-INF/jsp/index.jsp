@@ -212,7 +212,7 @@ function fn_search(){
 	<div style="display:flex;">
 		<div style="width: 50%;">
 			<div style="display:flex;justify-content: center;">
-				<select style="margin:10px;width: 15%;" class="list-group" id="region" name="region">
+				<select style="margin:10px;" class="list-group" id="region" name="region">
 					<option class="list-group-item" value="전국">전국</option>
 					<option class="list-group-item" value="서울">서울광역시</option>
 					<option class="list-group-item" value="인천">인천광역시</option>
