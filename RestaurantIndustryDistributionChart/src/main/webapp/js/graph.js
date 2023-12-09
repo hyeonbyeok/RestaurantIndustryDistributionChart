@@ -10,14 +10,6 @@ let chart = Highcharts.chart('container', {
         align: 'left',
         text: ''
     },
-    accessibility: {
-        announceNewData: {
-            enabled: true
-        }
-    }, 
-    credits: {
-	    enabled: false
-	  },
     xAxis: {
         type: 'category'
     },
@@ -65,14 +57,6 @@ let regionChart = Highcharts.chart('regieonGraph', {
         align: 'left',
         text: ''
     },
-    accessibility: {
-        announceNewData: {
-            enabled: true
-        }
-    }, 
-    credits: {
-	    enabled: false
-	  },
     xAxis: {
         type: 'category'
     },
