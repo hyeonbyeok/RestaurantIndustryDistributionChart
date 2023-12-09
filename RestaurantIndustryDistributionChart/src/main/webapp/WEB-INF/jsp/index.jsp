@@ -211,28 +211,28 @@ function fn_search(){
 	<h2 style="text-align: center;"> 지역별 요식업 분표도  </h2>
 	<div style="display:flex;">
 		<div style="width: 50%;">
-			<div style="display:flex;">
-				<select style="margin:10px;" class="list-group" id="region" name="region" >
+			<div style="display:flex;justify-content: center;">
+				<select style="margin:10px;width: 15%;" class="list-group" id="region" name="region">
 					<option class="list-group-item" value="전국">전국</option>
-					<option class="list-group-item" value="서울">서울</option>
-					<option class="list-group-item" value="인천">인천</option>
-					<option class="list-group-item" value="경기">경기</option>
-					<option class="list-group-item" value="충북">충북</option>
-					<option class="list-group-item" value="충남">충남</option>
-					<option class="list-group-item" selected value="대전">대전</option>
-					<option class="list-group-item" value="세종">세종</option>
-					<option class="list-group-item" value="전북">전북</option>
-					<option class="list-group-item" value="전남">전남</option>
-					<option class="list-group-item" value="광주">광주</option>
-					<option class="list-group-item" value="경북">경북</option>
-					<option class="list-group-item" value="경남">경남</option>
-					<option class="list-group-item" value="대구">대구</option>
-					<option class="list-group-item" value="부산">부산</option>
-					<option class="list-group-item" value="울산">울산</option>
-					<option class="list-group-item" value="강원">강원</option>
-					<option class="list-group-item" value="제주">제주</option>
+					<option class="list-group-item" value="서울">서울광역시</option>
+					<option class="list-group-item" value="인천">인천광역시</option>
+					<option class="list-group-item" value="경기">경기도</option>
+					<option class="list-group-item" value="충북">충청북도</option>
+					<option class="list-group-item" value="충남">충청남도</option>
+					<option class="list-group-item" selected="" value="대전">대전광역시</option>
+					<option class="list-group-item" value="세종">세종특별자치시</option>
+					<option class="list-group-item" value="전북">전라북도</option>
+					<option class="list-group-item" value="전남">전라남도</option>
+					<option class="list-group-item" value="광주">광주광역시</option>
+					<option class="list-group-item" value="경북">경상북도</option>
+					<option class="list-group-item" value="경남">경상남도</option>
+					<option class="list-group-item" value="대구">대구광역시</option>
+					<option class="list-group-item" value="부산">부산광역시</option>
+					<option class="list-group-item" value="울산">울산광역시</option>
+					<option class="list-group-item" value="강원">강원도</option>
+					<option class="list-group-item" value="제주">제주도</option>
 				</select>
-				<select style="margin:10px;" class="list-group" id="restaurantType" name="restaurantType">
+				<select style="margin:10px;width: 30%;" class="list-group" id="restaurantType" name="restaurantType">
 					<option class="list-group-item" value="전체">전체</option>
 					<option class="list-group-item" value="기타 간이">기타 간이</option>
 					<option class="list-group-item" value="주점">주점</option>
@@ -244,7 +244,7 @@ function fn_search(){
 					<option class="list-group-item" value="구내식당·뷔페">구내식당·뷔페</option>
 					<option class="list-group-item" value="한식">한식</option>
 				</select>
-				<button style="margin:10px;" type="button" class="btn btn-primary" onclick="fn_search();">검색</button>
+				<button style="margin:10px;width: 13%;" type="button" class="btn btn-primary" onclick="fn_search();">검색</button>
 			</div>
 			<div>
 				<div id="regieonGraph"></div>
