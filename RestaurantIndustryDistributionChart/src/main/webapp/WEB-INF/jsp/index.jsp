@@ -208,7 +208,7 @@ function fn_search(){
 </head>
 <body>
 <div>
-	<h2 style="text-align: center;"> 지역별 요식업 분표도  </h2>
+	<h2 style="text-align: center;"> 전국 요식업종 분포도  </h2>
 	<div style="display:flex;">
 		<div style="width: 50%;">
 			<div style="display:flex;justify-content: center;">
